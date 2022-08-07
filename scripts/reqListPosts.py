@@ -1,0 +1,11 @@
+import requests
+import json
+from getpass import getpass
+
+res = requests.post("http://localhost:3000/api/posts_admin", headers={'jsa-auth-token':getpass("JSA Auth Token:")}, json=json.dumps({'type':'list'}))
+
+print(res.status_code)
+
+posts_list = res.json()
+
+print(posts_list)
