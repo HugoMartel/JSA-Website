@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { disabledPostsDirectory, postImageDirectory, postsDirectory } from '../../lib/posts';
 import path from 'path';
 
-const auth_hash = <API TOKEN>
+const auth_hash = process.env.auth_hash
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === 'POST') {
