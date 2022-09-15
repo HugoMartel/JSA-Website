@@ -1,11 +1,10 @@
-import { GetStaticProps } from "next"
+import { GetServerSideProps } from "next"
 import Head from "next/head"
 import Link from "next/link"
 import Date from '../components/date'
 import Layout, { siteTitle } from "../components/layout"
-import { getSortedPostsData } from "../lib/posts"
+import { getSortedPostsData, postImageDirectory } from "../lib/posts"
 import utilStyles from '../styles/utils.module.css'
-
 
 export default function Posts({
     allPostsData
@@ -27,7 +26,7 @@ export default function Posts({
                 <ul className={utilStyles.list}>
                     {allPostsData.map(({ id, date, title, img }) => (
                         <li className={utilStyles.listItem} key={id}>
-                            <img height={"65px"} src={img} alt={id} />
+                            <img height={"65px"} src={"https://web-storage-jsa.s3.eu-west-3.amazonaws.com/affiches/"+img} alt={id} />
                             <div style={{ paddingLeft: "10px" }}>
                                 <Link href={`/posts/${id}`}>
                                     <a>{title}</a>
@@ -45,8 +44,9 @@ export default function Posts({
     )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
-    const allPostsData = getSortedPostsData()
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const allPostsData = await getSortedPostsData();
+
     return {
         props: {
             allPostsData

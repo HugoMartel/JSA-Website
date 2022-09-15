@@ -1,71 +1,135 @@
-import fs from 'fs'
-import path from 'path'
-import matter from 'gray-matter'
-import { remark } from 'remark'
-import html from 'remark-html'
+import matter from 'gray-matter';
+import { remark } from 'remark';
+import html from 'remark-html';
+import aws from 'aws-sdk';
 
-export const postsDirectory = path.join(process.cwd(), 'posts');
-export const disabledPostsDirectory = path.join(process.cwd(), 'disabled_posts');
-export const postImageDirectory = path.join(process.cwd(),'public/images/affiches')
+aws.config.region = "eu-west-3";
+//aws.config.logger = console;
 
-export function getSortedPostsData() {
-  // Get file names under /posts
-  const fileNames = fs.readdirSync(postsDirectory)
-  const allPostsData = fileNames.map(fileName => {
-    // Remove ".md" from file name to get id
-    const id = fileName.replace(/\.md$/, '')
+export const s3 = new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
 
-    // Read markdown file as string
-    const fullPath = path.join(postsDirectory, fileName)
-    const fileContents = fs.readFileSync(fullPath, 'utf8')
 
-    // Use gray-matter to parse the post metadata section
-    const matterResult = matter(fileContents)
+export const postsDirectory = process.env.S3_LOCATION + 'posts/';
+export const disabledPostsDirectory = process.env.S3_LOCATION + 'disabled_posts/';
+export const postImageDirectory = process.env.S3_LOCATION + 'affiches/';
 
-    // Combine the data with the id
+export let posts: Array<{ id: string, content: string, head:{date:string,title:string,img:string} }> = new Array();
+fetchAllPosts();// Start initializing the array ansynchronously
+
+/**
+ * 
+ * @returns 
+ */
+export async function getSortedPostsData() {
+
+  const tmp = posts.map(post => {
     return {
-      id,
-      ...(matterResult.data as { date: string; title: string; img: string })
+      date: post.head.date,
+      img: post.head.img,
+      title: post.head.title,
+      id: post.id
     }
   })
-  // Sort posts by date
-  return allPostsData.sort((a, b) => {
-    if (a.date < b.date) {
-      return 1
-    } else {
-      return -1
-    }
+
+  posts.sort((a,b) => {
+    const x = new Date(a.head.date);
+    const y = new Date(b.head.date);
+
+    if (x > y)
+      return -1;
+    else if (x == y)
+      return 0;
+    else
+      return 1;
   })
+
+  return tmp;
 }
 
+/**
+ * 
+ * @returns 
+ */
 export function getAllPostIds() {
-  const fileNames = fs.readdirSync(postsDirectory)
-  return fileNames.map(fileName => {
+  return posts.map(post => {
     return {
       params: {
-        id: fileName.replace(/\.md$/, '')
+        id: post.id
       }
     }
   })
 }
 
+
+/**
+ * 
+ * @param id 
+ * @returns 
+ */
 export async function getPostData(id: string) {
-  const fullPath = path.join(postsDirectory, `${id}.md`)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
 
-  // Use gray-matter to parse the post metadata section
-  const matterResult = matter(fileContents)
+  //console.log(posts);//! DEBUG
 
-  // Use remark to convert markdown into HTML string
-  const processedContent = await remark()
-    .use(html)
-    .process(matterResult.content)
-  const contentHtml = processedContent.toString()
+  const post_id = posts.findIndex(function(post) {
+    return post.id == id;
+  })
 
-  // Combine the data with the id and contentHtml
-  return {
-    id,
-    contentHtml,
-    ...(matterResult.data as { date: string; title: string })
+
+  if (post_id == -1) {
+    console.log("Unknown post: "+ id +"");
+    return {
+      success: false
+    };
+  } else {
+    return {
+      success: true,
+      id: posts[post_id].id,
+      date: posts[post_id].head.date,
+      img: posts[post_id].head.img,
+      title: posts[post_id].head.title,
+      contentHtml: posts[post_id].content
+    }
   }
+}
+
+/**
+ * Initialize the `posts` array ansynchronously with the amazon S3 stored posts.
+ */
+export async function fetchAllPosts() {
+  posts = [];// Empty the posts array to fill it again
+
+  // Call S3 to obtain a list of the objects in the bucket
+  const objectsList = await s3.listObjects({ Bucket: process.env.S3_BUCKET, Prefix: "posts" }).promise();
+
+  objectsList.Contents.map(x => x.Key.split("/").pop()).forEach(postName => {
+    // Remove ".md" from file name to get id
+    const id = postName.replace(/\.md$/, '');
+
+    // GET markdown file from server
+    s3.getObject({ Bucket: process.env.S3_BUCKET, Key: "posts/" + postName }, async (err, data) => {
+
+      if (err) {
+        console.error(err);
+      } else {
+
+        console.log(data.Body.toString('utf-8'))//! DEBUG
+
+        // Use gray-matter to parse the post metadata section
+        const matterResult = matter(data.Body.toString('utf-8'));
+
+        // Combine the data with the id
+        posts.push({
+          id: id,
+          content: (await remark().use(html).process(matterResult.content)).toString(),
+          head: {...(matterResult.data as { date: string; title: string; img: string })}
+        })
+
+      }
+
+    })
+
+  })
 }

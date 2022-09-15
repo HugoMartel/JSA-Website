@@ -2,7 +2,6 @@ import requests
 import os
 import base64
 import json
-from markdown import markdown, markdownFromFile
 from getpass import getpass
 from tkinter.filedialog import askopenfilename
 
@@ -50,7 +49,7 @@ assert(image != "")
 assert(file != "")
 
 res = requests.post(
-    "http://localhost:3000/api/posts_admin",
+    os.environ["url"]+"api/posts_admin",
     headers={'jsa-auth-token':getpass("JSA Auth Token:")},
     json=json.dumps({
         'type': 'add',

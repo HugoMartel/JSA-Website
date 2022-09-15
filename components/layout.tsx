@@ -169,7 +169,7 @@ const random_ships:JSX.Element[] = [
 <path d="M39.701,359.38c2.051,0,4.104-0.782,5.669-2.348l6.047-6.047c3.131-3.131,3.131-8.207,0-11.337
  c-3.131-3.131-8.207-3.131-11.337,0l-6.047,6.047c-3.131,3.131-3.131,8.207,0,11.337C35.598,358.597,37.65,359.38,39.701,359.38z"/>
   </svg>,
-  <svg id="bonus_svg" key={3} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 417.21 417.21" xmlSpace="preserve">
+  <svg id="bonus_svg" key={3} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xmlSpace="preserve">
 <g>
  <circle fill="#61CCF2" cx="337.26" cy="79.96" r="19.643"/>
  <path fill="#FFFFFF" d="M323.37,66.07c7.67-7.67,20.11-7.67,27.78,0s7.67,20.11,0,27.78"/>
@@ -285,7 +285,7 @@ const random_ships:JSX.Element[] = [
    C334.891,388.202,333.609,388.69,332.33,388.69z"/>
 </g>
   </svg>,
-  <svg id="bonus_svg" key={4} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 464.518 464.518" xmlSpace="preserve">
+  <svg id="bonus_svg" key={4} version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xmlSpace="preserve">
 <g>
 		<rect x="394.088" y="253.216" transform="matrix(0.7071 0.7071 -0.7071 0.7071 324.2587 -213.0432)" fill="#FCBC1D" width="50.415" height="63.355"/>
 	<polygon fill="#FCBC1D" points="388.228,209.022 423.87,244.664 379.07,289.464 343.428,253.821 349.228,248.021 	"/>

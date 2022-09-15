@@ -1,14 +1,15 @@
 import Layout from '../../components/layout'
-import { getAllPostIds, getPostData } from '../../lib/posts'
+import { getPostData } from '../../lib/posts'
 import Head from 'next/head'
 import Date from '../../components/date'
 import utilStyles from '../../styles/utils.module.css'
-import { GetStaticProps, GetStaticPaths } from 'next'
+import { GetServerSideProps } from 'next'
 
 export default function Post({
   postData
 }: {
   postData: {
+    success: boolean
     title: string
     date: string
     img: string
@@ -27,7 +28,7 @@ export default function Post({
         </div>
         <div>
           <img
-            src={postData.img}
+            src={"https://web-storage-jsa.s3.eu-west-3.amazonaws.com/affiches/"+postData.img}
             style={{margin: "auto"}}
             width="50%"
             alt={postData.title}
@@ -39,19 +40,22 @@ export default function Post({
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = getAllPostIds()
-  return {
-    paths,
-    fallback: false
-  }
-}
+export const getServerSideProps: GetServerSideProps = async (context) => {
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const postData = await getPostData(params.id as string)
-  return {
-    props: {
-      postData
+  const postData = await getPostData(context.params.id as string)
+
+  if (!postData.success) {
+
+    return {
+      notFound: true
+    }
+
+  } else {
+
+    return {
+      props: {
+        postData
+      }
     }
   }
 }
