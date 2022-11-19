@@ -28,7 +28,7 @@ export default function Post({
         </div>
         <div>
           <img
-            src={"https://web-storage-jsa.s3.eu-west-3.amazonaws.com/affiches/"+postData.img}
+            src={"/images/affiches/"+postData.img}
             style={{margin: "auto"}}
             width="50%"
             alt={postData.title}
@@ -42,20 +42,17 @@ export default function Post({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-  const postData = await getPostData(context.params.id as string)
-
-  if (!postData.success) {
-
+  if (context.params == null)
     return {
       notFound: true
     }
 
-  } else {
+  const postData = await getPostData(context.params.id as string)
 
-    return {
-      props: {
-        postData
-      }
+
+  return {
+    props: {
+      postData
     }
   }
 }

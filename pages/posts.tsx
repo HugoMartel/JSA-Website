@@ -3,7 +3,7 @@ import Head from "next/head"
 import Link from "next/link"
 import Date from '../components/date'
 import Layout, { siteTitle } from "../components/layout"
-import { getSortedPostsData, postImageDirectory } from "../lib/posts"
+import { getSortedPostsData } from "../lib/posts"
 import utilStyles from '../styles/utils.module.css'
 
 export default function Posts({
@@ -26,10 +26,10 @@ export default function Posts({
                 <ul className={utilStyles.list}>
                     {allPostsData.map(({ id, date, title, img }) => (
                         <li className={utilStyles.listItem} key={id}>
-                            <img height={"65px"} src={"https://web-storage-jsa.s3.eu-west-3.amazonaws.com/affiches/"+img} alt={id} />
+                            <img height={"65px"} src={"/images/affiches/"+img} alt={id} />
                             <div style={{ paddingLeft: "10px" }}>
                                 <Link href={`/posts/${id}`}>
-                                    <a>{title}</a>
+                                    {title}
                                 </Link>
                                 <br />
                                 <small className={utilStyles.lightText}>

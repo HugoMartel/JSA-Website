@@ -4,19 +4,13 @@ Junia Space Association's website using Nextjs.
 
 ## Site usage
 
-The server uses markdown files to store articles and display them dynamically. Articles can be added using the `/api/posts_admin` location.
+The server uses markdown files to store articles and display them dynamically. A small API is available to list members of the association or get a list of the available posts.
 
-The API has 5 functions for posts manipulation:
+The API has 2 functions for now:
 
-- list
+- /api/bureau/ : GET
 
-- enable
-
-- disable
-
-- add
-
-- remove
+- /api/posts_admin/ : POST
 
 Example python scripts to call the API can be found in the `./scripts/` folder.
 
@@ -31,3 +25,4 @@ npm i
 npm run build
 npm run start
 ```
+

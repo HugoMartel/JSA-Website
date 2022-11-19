@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Layout, { siteDesc, siteTitle } from '../components/layout'
 import utilStyles from '../styles/utils.module.css'
-import { fetchAllPosts, getSortedPostsData } from '../lib/posts'
+import { getSortedPostsData } from '../lib/posts'
 import Link from 'next/link'
 import Date from '../components/date'
 import { GetServerSideProps, GetStaticProps } from 'next'
@@ -88,11 +88,9 @@ export default function Home({
         <ul className={utilStyles.list}>
           {allPostsData.slice(0,5).map(({ id, date, title, img }) => (
             <li className={utilStyles.listItem} key={id}>
-              <img height={"65px"} src={"https://web-storage-jsa.s3.eu-west-3.amazonaws.com/affiches/"+img} alt={id} />
+              <img height={"65px"} src={"/images/affiches/"+img} alt={id} />
               <div style={{paddingLeft: "10px"}}>
-                <Link href={`/posts/${id}`}>
-                  <a>{title}</a>
-                </Link>
+                <Link href={`/posts/${id}`}>{title}</Link>
                 <br />
                 <small className={utilStyles.lightText}>
                   <Date dateString={date} />
@@ -102,8 +100,8 @@ export default function Home({
           ))}
         </ul>
         <Link href="/posts">
-            <a>Toutes les actualit&eacute;s →</a>
-          </Link>
+          Toutes les actualit&eacute;s →
+        </Link>
       </section>
     </Layout>
   )
